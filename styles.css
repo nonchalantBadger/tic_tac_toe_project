@@ -1,0 +1,23 @@
+#grid_container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#grid_box{
+    display: grid;
+    grid-template-columns: repeat(3,250px);
+    grid-template-rows: repeat(3,250px);
+    gap: 15px;
+    background-color: black;
+
+}
+
+
+.grid{
+    display: flex;
+    background-color:white;
+    justify-content: center;
+    align-items: center;
+    size: 50px
+}    
