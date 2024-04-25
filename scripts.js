@@ -1,6 +1,15 @@
+// GLOBAL VARIABLES
+
 let grids = document.querySelectorAll(".grid")
 
+resetDiv = document.getElementById("reset_button")
 
+/*
+Creates the gameboard for which the game of Tic Tac Toe takes place.
+It comes with four functions which allow you to: create the game board,
+retrieve the game board, print the gamebord in the console and to place, 
+a mark of the game board.
+*/
 function gameBoard () {
 
     const rows = 3
@@ -57,13 +66,12 @@ function gameBoard () {
 
 }
 
-function duplicateRemove(object){
-
-    duplicateResult = (object.filter((value,index,self) => self.indexOf(value) == index))
-    return duplicateResult
-
-}
-
+/* 
+This function checks to see if the game has been won. 
+It takes two parameters the game board and the mark of the current player, X or O.
+It then checks to see if the either the X or O appears three times in a row,
+The function returns if the game has been won or not.
+*/
 function winCondition (object,currentPlayer) {
     
     let winConditionMet = false
@@ -103,7 +111,7 @@ function winCondition (object,currentPlayer) {
                 winCounter += 1
             }else{
                 break
-            }
+            }   
         }
 
         // A player has won
@@ -116,28 +124,33 @@ function winCondition (object,currentPlayer) {
     }
 }
 
-function resetGame () {
-    grids.forEach(square => {
-        square.innerText = ""
-    }
-    
+function resetGame (game) {
+    console.log(`running reset on ${game.getBoard()}`)
+    game.createBoard()
+    grids.forEach(
+        square => {
+            square.innerText = ""
+        }
     )
+    game.printBoard()
 }
 
-function gameController () {
+/*
+This function is responsible for controlling the flow of the game.
+It takes four parameters, the names of the players and their icons.
+*/
+function gameController (player1Name,player2Name,player1Icon,player2Icon) {
 
-    playerOne = "X"
-    playerTwo = "O"
     gameCounter = 0
 
     players = [
         {
-            name:"playerOne",
-            mark:"X"
+            name: player1Name,
+            mark: player1Icon
         },
         {
-            name:"playerOne",
-            mark:"O"
+            name: player2Name,
+            mark: player2Icon
         }
     ]
 
@@ -151,17 +164,18 @@ function gameController () {
         }
     }
 
-    function nextTurn (gameState) {
+    function nextTurn (gameState,game,gameCounter) {
 
         gameWon = gameState
+        gameObject = game
+        gameCounter = 0
 
         if (gameWon == true){
             console.log(`Game is over ${activePlayer.name} won`)
             let playAgain = prompt("Do you want to play again?")
             if (playAgain == "Yes"){
-                resetGame()
+                resetGame(gameObject)
                 gameWon = false
-                game.createBoard
             }
         } else if(gameCounter > 8){
             console.log("draw")
@@ -174,8 +188,8 @@ function gameController () {
 
     function selectGrid (squarePlace, activePlayer) {
         if (squarePlace.innerText != "X" && squarePlace.innerText != "O"){
+            squarePlace.style.fontSize= "50px" 
             squarePlace.innerText = activePlayer.mark
-            squarePlace.style.fontsize="50px" 
             game.placeMark(squarePlace.id,activePlayer.mark)
             gameCounter +=1
         }
@@ -184,6 +198,13 @@ function gameController () {
     const game = gameBoard()
 
     gameWon = false
+
+    resetDiv.addEventListener('click',function(){
+        console.log("hello")
+        resetGame(gameObject)
+    })
+
+
        
     grids.forEach( square => {
 
@@ -192,23 +213,19 @@ function gameController () {
             selectGrid(square,activePlayer)
 
             console.log(game.printBoard())
-
+            setTimeout(function(){console.log("waited")},1)
             // Checks to see if the game has been won
             isGameWon = winCondition(game.getBoard(),activePlayer.mark)
 
             // Based on if the game has been won, next turn is decided
-            nextTurn (isGameWon)
+            nextTurn (isGameWon,game,gameCounter)
         }
 
     })
 
 }
 
-newGame = gameController()
-
-
-
-
+newGame = gameController("playerOne","playerTwo","🥲","🤖")
 
 
 

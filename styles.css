@@ -1,3 +1,15 @@
+*{
+    font-family: sans-serif;
+
+    /* padding: 10px 0 10px 0; */
+}
+
+#title{
+    padding: 10px 0 10px 0;
+    font-size: 30px;
+}
+
+
 #grid_container{
     display: flex;
     justify-content: center;
@@ -6,8 +18,8 @@
 
 #grid_box{
     display: grid;
-    grid-template-columns: repeat(3,250px);
-    grid-template-rows: repeat(3,250px);
+    grid-template-columns: repeat(3,200px);
+    grid-template-rows: repeat(3,200px);
     gap: 15px;
     background-color: black;
 
@@ -19,5 +31,4 @@
     background-color:white;
     justify-content: center;
     align-items: center;
-    size: 50px
 }    
