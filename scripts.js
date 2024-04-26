@@ -1,6 +1,7 @@
 // GLOBAL VARIABLES
 
 let grids = document.querySelectorAll(".grid")
+let overlayTextDiv = document.getElementById("overlay_text")
 
 resetDiv = document.getElementById("reset_button")
 
@@ -75,6 +76,8 @@ The function returns if the game has been won or not.
 function winCondition (object,currentPlayer) {
     
     let winConditionMet = false
+    let remainingGridPlace = false
+    let fullGrid = false
 
     diagonalLeft = [[0,0],[1,1],[2,2]]
     diagonalRight = [[0,2],[1,1],[2,0]]
@@ -118,14 +121,36 @@ function winCondition (object,currentPlayer) {
         if(winCounter == 3){
             console.log("Victory!")
             winConditionMet = true
-            return winConditionMet
+            return {winConditionMet,fullGrid}
         }
 
     }
+
+    // If every cell has a value and the win counter has not triggered then must be draw
+
+    for(let i = 0; i < 3; i++){
+        for(let j = 0; j < 3;j++){
+            //console.log(object.[i][j])
+            if(object[i][j] == null || object[i][j] == ``){
+                remainingGridPlace = true
+            }
+                
+            }
+        }
+
+    if (remainingGridPlace != true){
+        fullGrid = true
+    }
+        
+    return {winConditionMet,fullGrid}
+
+    
 }
 
 function resetGame (game) {
     console.log(`running reset on ${game.getBoard()}`)
+    overlayTextDiv.innerText = ``
+    overlayTextDiv.style.zIndex = 0
     game.createBoard()
     grids.forEach(
         square => {
@@ -140,8 +165,6 @@ This function is responsible for controlling the flow of the game.
 It takes four parameters, the names of the players and their icons.
 */
 function gameController (player1Name,player2Name,player1Icon,player2Icon) {
-
-    gameCounter = 0
 
     players = [
         {
@@ -164,24 +187,25 @@ function gameController (player1Name,player2Name,player1Icon,player2Icon) {
         }
     }
 
-    function nextTurn (gameState,game,gameCounter) {
+    function nextTurn (gameState,game) {
 
-        gameWon = gameState
+        gameWon = gameState.winConditionMet 
+        fullGrid = gameState.fullGrid
         gameObject = game
-        gameCounter = 0
+
+        console.log(`game won:${gameWon} fullgrid:${fullGrid}`)
 
         if (gameWon == true){
             console.log(`Game is over ${activePlayer.name} won`)
-            let playAgain = prompt("Do you want to play again?")
-            if (playAgain == "Yes"){
-                resetGame(gameObject)
-                gameWon = false
-            }
-        } else if(gameCounter > 8){
-            console.log("draw")
+            overlayTextDiv.innerText = `${activePlayer.name}`
+            overlayTextDiv.style.zIndex = 9999
+            overlayTextDiv.style.pointerEvents = "none";
+        } else if(fullGrid == true){
+            overlayTextDiv.innerText = `UNEASY TENSION CIVILISATION AND AI`
+            overlayTextDiv.style.zIndex = 9999
         }else{
             switchPlayer()
-            console.log("ran")
+
         }
 
     }
@@ -191,7 +215,7 @@ function gameController (player1Name,player2Name,player1Icon,player2Icon) {
             squarePlace.style.fontSize= "50px" 
             squarePlace.innerText = activePlayer.mark
             game.placeMark(squarePlace.id,activePlayer.mark)
-            gameCounter +=1
+
         }
     }
 
@@ -200,7 +224,6 @@ function gameController (player1Name,player2Name,player1Icon,player2Icon) {
     gameWon = false
 
     resetDiv.addEventListener('click',function(){
-        console.log("hello")
         resetGame(gameObject)
     })
 
@@ -209,23 +232,24 @@ function gameController (player1Name,player2Name,player1Icon,player2Icon) {
     grids.forEach( square => {
 
         square.onclick = () => {
-            // When grid is selected an X or O is placed
+            // When grid is selected an X or O is placed on the board
             selectGrid(square,activePlayer)
 
-            console.log(game.printBoard())
-            setTimeout(function(){console.log("waited")},1)
+            //console.log(game.printBoard())
             // Checks to see if the game has been won
             isGameWon = winCondition(game.getBoard(),activePlayer.mark)
 
             // Based on if the game has been won, next turn is decided
-            nextTurn (isGameWon,game,gameCounter)
+            nextTurn (isGameWon,game)
         }
 
     })
 
+    return{}
+
 }
 
-newGame = gameController("playerOne","playerTwo","🥲","🤖")
+newGame = gameController("CIVILISATION","AI","🥲","🤖")
 
 
 
