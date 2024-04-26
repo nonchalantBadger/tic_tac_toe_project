@@ -2,6 +2,7 @@
 
 let grids = document.querySelectorAll(".grid")
 let overlayTextDiv = document.getElementById("overlay_text")
+let mainBodyDiv = document.getElementById("content")
 
 resetDiv = document.getElementById("reset_button")
 
@@ -149,6 +150,7 @@ function winCondition (object,currentPlayer) {
 
 function resetGame (game) {
     console.log(`running reset on ${game.getBoard()}`)
+    mainBodyDiv.style.opacity = 1
     overlayTextDiv.innerText = ``
     overlayTextDiv.style.zIndex = 0
     game.createBoard()
@@ -200,9 +202,11 @@ function gameController (player1Name,player2Name,player1Icon,player2Icon) {
             overlayTextDiv.innerText = `${activePlayer.name}`
             overlayTextDiv.style.zIndex = 9999
             overlayTextDiv.style.pointerEvents = "none";
+            mainBodyDiv.style.opacity = 0.5
         } else if(fullGrid == true){
             overlayTextDiv.innerText = `UNEASY TENSION CIVILISATION AND AI`
             overlayTextDiv.style.zIndex = 9999
+            mainBodyDiv.style.opacity = 0.5
         }else{
             switchPlayer()
 
@@ -211,12 +215,9 @@ function gameController (player1Name,player2Name,player1Icon,player2Icon) {
     }
 
     function selectGrid (squarePlace, activePlayer) {
-        if (squarePlace.innerText != "X" && squarePlace.innerText != "O"){
-            squarePlace.style.fontSize= "50px" 
-            squarePlace.innerText = activePlayer.mark
-            game.placeMark(squarePlace.id,activePlayer.mark)
-
-        }
+        squarePlace.style.fontSize= "50px" 
+        squarePlace.innerText = activePlayer.mark
+        game.placeMark(squarePlace.id,activePlayer.mark)
     }
 
     const game = gameBoard()
@@ -232,17 +233,17 @@ function gameController (player1Name,player2Name,player1Icon,player2Icon) {
     grids.forEach( square => {
 
         square.onclick = () => {
-            // When grid is selected an X or O is placed on the board
-            selectGrid(square,activePlayer)
+            if (square.innerText == "" || square.innerText == null)
+                // When grid is selected a player mark is placed on the board
+                selectGrid(square,activePlayer)
 
-            //console.log(game.printBoard())
-            // Checks to see if the game has been won
-            isGameWon = winCondition(game.getBoard(),activePlayer.mark)
+                //console.log(game.printBoard())
+                // Checks to see if the game has been won
+                isGameWon = winCondition(game.getBoard(),activePlayer.mark)
 
-            // Based on if the game has been won, next turn is decided
-            nextTurn (isGameWon,game)
-        }
-
+                // Based on if the game has been won, next turn is decided
+                nextTurn (isGameWon,game)
+            }
     })
 
     return{}
